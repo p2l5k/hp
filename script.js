@@ -1,7 +1,7 @@
 const canvas = document.querySelector("canvas");
 const c = canvas.getContext("2d");
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
+canvas.width = 1024;
+canvas.height = 576;
 const gravity = 2;
 class Player {
   constructor() {
@@ -42,14 +42,52 @@ class Platform {
     c.drawImage(this.image, this.position.x, this.position.y);
   }
 }
+class GenericObject {
+  constructor({ x, y, image2 }) {
+    this.position = {
+      x: x,
+      y: y,
+    };
+    this.image2 = image2;
+    (this.width = image2.width), (this.height = image2.height);
+  }
+  draw() {
+    c.drawImage(this.image2, this.position.x, this.position.y);
+  }
+}
+class GenericObject2 {
+  constructor({ x, y, image3 }) {
+    this.position = {
+      x: x,
+      y: y,
+    };
+    this.image3 = image3;
+    (this.width = image3.width), (this.height = image3.height);
+  }
+  draw() {
+    c.drawImage(this.image3, this.position.x, this.position.y);
+  }
+}
+
 const image = new Image();
 image.src = "img/platform.png";
+
+const image2 = new Image();
+image2.src = "img/background.png";
+const image3 = new Image();
+image3.src = "img/hills.png";
+
 const player = new Player();
 const platforms = [
-  new Platform({ x: 100, y: 200, image }),
-  new Platform({ x: 300, y: 300, image }),
+  new Platform({ x: 0, y: 470, image }),
+  new Platform({
+    x: image.width - 2,
+    y: 470,
+    image,
+  }),
 ];
-
+const genericObjects = [new GenericObject({ x: -1, y: -1, image2 })];
+const genericObjects2 = [new GenericObject2({ x: -1, y: -1, image3 })];
 const keys = {
   right: {
     pressed: false,
@@ -61,8 +99,14 @@ const keys = {
 let screenOffset = 0;
 function animate() {
   requestAnimationFrame(animate);
-  c.clearRect(0, 0, canvas.width, canvas.height);
-
+  c.fillStyle = "white";
+  c.fillRect(0, 0, canvas.width, canvas.height);
+  genericObjects.forEach((genericObject) => {
+    genericObject.draw();
+  });
+  genericObjects2.forEach((genericObject2) => {
+    genericObject2.draw();
+  });
   platforms.forEach((platform) => {
     platform.draw();
   });
