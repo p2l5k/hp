@@ -2,7 +2,7 @@ const canvas = document.querySelector("canvas");
 const c = canvas.getContext("2d");
 canvas.width = 1024;
 canvas.height = 576;
-const gravity = 2;
+const gravity = 1;
 class Player {
   constructor() {
     this.speed = 10;
@@ -108,6 +108,16 @@ function init() {
     }),
     new Platform({
       x: image.width * 3 + 300,
+      y: 470,
+      image,
+    }),
+    new Platform({
+      x: image.width * 4 + 300,
+      y: 270,
+      image,
+    }),
+    new Platform({
+      x: image.width * 5 + 300,
       y: 470,
       image,
     }),
