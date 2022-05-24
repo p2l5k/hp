@@ -5,6 +5,7 @@ canvas.height = 576;
 const gravity = 2;
 class Player {
   constructor() {
+    this.speed = 10;
     this.position = {
       x: 100,
       y: 100,
@@ -26,7 +27,6 @@ class Player {
     this.position.x += this.velocity.x;
     if (this.height + this.position.y + this.velocity.y <= canvas.height)
       this.velocity.y += gravity;
-    else this.velocity.y = 0;
   }
 }
 class Platform {
@@ -77,17 +77,11 @@ image2.src = "img/background.png";
 const image3 = new Image();
 image3.src = "img/hills.png";
 
-const player = new Player();
-const platforms = [
-  new Platform({ x: 0, y: 470, image }),
-  new Platform({
-    x: image.width - 2,
-    y: 470,
-    image,
-  }),
-];
-const genericObjects = [new GenericObject({ x: -1, y: -1, image2 })];
-const genericObjects2 = [new GenericObject2({ x: -1, y: -1, image3 })];
+let player = new Player();
+let platforms = [];
+let genericObjects = [];
+let genericObjects2 = [];
+
 const keys = {
   right: {
     pressed: false,
@@ -97,6 +91,32 @@ const keys = {
   },
 };
 let screenOffset = 0;
+
+function init() {
+  player = new Player();
+  platforms = [
+    new Platform({ x: 0, y: 470, image }),
+    new Platform({
+      x: image.width - 2,
+      y: 470,
+      image,
+    }),
+    new Platform({
+      x: image.width * 2 + 100,
+      y: 470,
+      image,
+    }),
+    new Platform({
+      x: image.width * 3 + 300,
+      y: 470,
+      image,
+    }),
+  ];
+  genericObjects = [new GenericObject({ x: -1, y: -1, image2 })];
+  genericObjects2 = [new GenericObject2({ x: -1, y: -1, image3 })];
+
+  screenOffset = 0;
+}
 function animate() {
   requestAnimationFrame(animate);
   c.fillStyle = "white";
@@ -113,21 +133,21 @@ function animate() {
   player.update();
 
   if (keys.right.pressed && player.position.x < 400) {
-    player.velocity.x = 5;
+    player.velocity.x = player.speed;
   } else if (keys.left.pressed && player.position.x > 100) {
-    player.velocity.x = -5;
+    player.velocity.x = -player.speed;
   } else {
     player.velocity.x = 0;
 
     if (keys.right.pressed) {
       platforms.forEach((platform) => {
-        screenOffset += 5;
-        platform.position.x -= 5;
+        screenOffset += player.speed;
+        platform.position.x -= player.speed;
       });
     } else if (keys.left.pressed) {
       platforms.forEach((platform) => {
-        screenOffset -= 5;
-        platform.position.x += 5;
+        screenOffset -= player.speed;
+        platform.position.x += player.speed;
       });
     }
   }
@@ -147,14 +167,17 @@ function animate() {
   if (screenOffset > 2000) {
     console.log("you win");
   }
+  if (player.position.y > canvas.height) {
+    init();
+  }
 }
-
+init();
 animate();
 window.addEventListener("keydown", ({ keyCode }) => {
   console.log(keyCode);
   switch (keyCode) {
     case 38:
-      player.velocity.y -= 20;
+      player.velocity.y -= 10;
 
       break;
     case 37:
